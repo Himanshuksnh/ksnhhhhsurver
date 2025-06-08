@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px dashed #e1e8ed;
+            border-radius: 8px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .file-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .requirements {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .requirements h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .requirements ul {
+            color: #666;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+
+        .requirements li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 File Upload</h1>
+            <p>Upload your documents securely</p>
+        </div>
+
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="username">Your Name *</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required 
+                    placeholder="Enter your full name"
+                    maxlength="100"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="userFile">Choose File *</label>
+                <input 
+                    type="file" 
+                    id="userFile" 
+                    name="userFile" 
+                    accept=".pdf,.jpg,.jpeg,.png" 
+                    required
+                >
+                <div class="file-info">
+                    Accepted formats: PDF, JPG, PNG (Max size: 5MB)
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Upload File
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Uploading your file...</p>
+            </div>
+        </form>
+
+        <div class="requirements">
+            <h3>📋 Requirements</h3>
+            <ul>
+                <li>Name field is required</li>
+                <li>File must be PDF, JPG, or PNG format</li>
+                <li>Maximum file size: 5MB</li>
+                <li>All uploads are logged for security</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const fileInput = document.getElementById('userFile');
+            const nameInput = document.getElementById('username');
+
+            // Basic validation
+            if (!nameInput.value.trim()) {
+                alert('Please enter your name');
+                e.preventDefault();
+                return;
+            }
+
+            if (!fileInput.files[0]) {
+                alert('Please select a file to upload');
+                e.preventDefault();
+                return;
+            }
+
+            // Check file size (5MB = 5 * 1024 * 1024 bytes)
+            if (fileInput.files[0].size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                e.preventDefault();
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+            loading.classList.add('show');
+        });
+
+        // File input change handler to show selected file info
+        document.getElementById('userFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileInfo = document.querySelector('.file-info');
+            
+            if (file) {
+                const fileSize = (file.size / 1024).toFixed(2);
+                fileInfo.innerHTML = `
+                    Selected: <strong>${file.name}</strong> (${fileSize} KB)<br>
+                    Accepted formats: PDF, JPG, PNG (Max size: 5MB)
+                `;
+            } else {
+                fileInfo.textContent = 'Accepted formats: PDF, JPG, PNG (Max size: 5MB)';
+            }
+        });
+
+        // Prevent form resubmission on page refresh
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>
